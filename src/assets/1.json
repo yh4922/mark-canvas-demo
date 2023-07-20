@@ -1,0 +1,28 @@
+{
+  "version": "0.3.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "啊实打实",
+      "text": "",
+      "points": [
+        [
+          371.7352415026834,
+          208.56887298747762
+        ],
+        [
+          674.3558282208589,
+          462.14723926380367
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "1.jpg",
+  "imageData": null,
+  "imageHeight": 720,
+  "imageWidth": 1280,
+  "text": ""
+}
