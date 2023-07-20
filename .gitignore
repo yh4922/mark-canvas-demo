@@ -11,6 +11,11 @@ node_modules
 dist-ssr
 *.local
 
+src/plugin/node_modules
+src/plugin/.git
+src/plugin/package.json
+
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
