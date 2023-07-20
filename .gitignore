@@ -11,9 +11,9 @@ node_modules
 dist-ssr
 *.local
 
-src/plugin/node_modules
-src/plugin/.git
-src/plugin/package.json
+src/plugin/MarkCanvas/node_modules
+src/plugin/MarkCanvas/.git
+src/plugin/MarkCanvas/package.json
 
 
 # Editor directories and files

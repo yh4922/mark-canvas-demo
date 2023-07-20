@@ -4,7 +4,8 @@
   "description": "- 矩形\r - - 拖拽绘制\r - - 完成之后, 选中可以拖动4个顶点",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc"
   },
   "author": "",
   "license": "ISC",
