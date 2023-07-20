@@ -24,10 +24,12 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "./src/**/*",
+    "./src",
   ],
   // 忽略 node_modules
   "exclude": [
-    "node_modules"
+    "node_modules",
+    // "node_modules/@leafer",
+    // "node_modules/@leafer-ui",
   ]
 }

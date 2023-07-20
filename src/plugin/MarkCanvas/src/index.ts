@@ -1,8 +1,10 @@
 import {
   ILeaferConfig,
   IPointData, Leafer, Path, App, LeafHelper, Image, ImageEvent, PointerEvent,
-  ZoomEvent, MoveEvent
+  ZoomEvent, MoveEvent, Rect, Line
 } from 'leafer-ui'
+
+// import anime from 'animejs/lib/anime.es.js';
 
 import { MarkObjectType, MarkObject, MarkRectObject, MarkPolygonObject } from './object'
 
@@ -43,6 +45,8 @@ class MarkCanvas {
   windowKeydown: (e: KeyboardEvent) => void
   // 全局键盘抬起事件
   windowKeyup: (e: KeyboardEvent) => void
+  // 鼠标移动事件
+  docMouseMove: (e: MouseEvent) => void
   // 当前绘制类型
   currentDrawingType: MarkObjectType = MarkObjectType.NONE
   // 标注对象列表
@@ -82,6 +86,22 @@ class MarkCanvas {
     this.backgroundImage = new Image()
     this.objectsLayer.add(this.backgroundImage)
 
+    // let line0 = new Line({ x: 0, y: 0, strokeWidth: 5, width: 0, stroke: "red", rotation: 45 })
+    // let line1 = new Line({ x: 100, y: 100, strokeWidth: 5, width: 0, stroke: "red" })
+    // let line2 = new Line({ x: 300, y: 100, strokeWidth: 5, width: 0, stroke: "red", rotation: 90 })
+    // let line3 = new Line({ x: 300, y: 200, strokeWidth: 5, width: 0, stroke: "red", rotation: 135 })
+    // this.objectsLayer.add(line0)
+    // this.objectsLayer.add(line1)
+    // this.objectsLayer.add(line2)
+    // this.objectsLayer.add(line3)
+
+    // setTimeout(() => {
+    //   let time = 200
+    //   anime({ targets: line0, easing: 'linear', width: 141.4213562373095, duration: time, delay: time * 0 })
+    //   anime({ targets: line1, easing: 'linear', width: 200, duration: time, delay: time * 1 })
+    //   anime({ targets: line2, easing: 'linear', width: 100, duration: time, delay: time * 2 })
+    //   anime({ targets: line3, easing: 'easeInOutQuad', width: 200, duration: time, delay: time * 3 })
+    // }, 1000)
 
     // 辅助提示图层
     this.guideLayer = this.app.addLeafer({ hittable: false })
@@ -115,7 +135,7 @@ class MarkCanvas {
     window.addEventListener('keyup', this.windowKeyup)
 
 
-    document.addEventListener('mousemove', (e) => {
+    this.docMouseMove = (e) => {
       let { x, y } = this.view.getBoundingClientRect()
       x = e.clientX - x
       y = e.clientY - y
@@ -125,7 +145,8 @@ class MarkCanvas {
       event.buttons = e.buttons
       event.spaceKey = this.moveStatus
       this.appPointMove(event as PointerEvent)
-    })
+    }
+    document.addEventListener('mousemove', this.docMouseMove)
   }
   /** 获取画布DOM */
   get view(): HTMLElement {
@@ -522,6 +543,16 @@ class MarkCanvas {
   /** 导出JSON数据 */
   toJSON(): MarkObjectJSON[] {
     return this.markObjectList.filter(item => item.status !== 'draw').map(obj => obj.export())
+  }
+  destory() {
+    // 移除事件
+    window.removeEventListener('keydown', this.windowKeydown)
+    window.removeEventListener('keyup', this.windowKeyup)
+    document.removeEventListener('mousemove', this.docMouseMove)
+
+    // 销毁对象
+    this.view.innerHTML = ''
+    this.app.destory()
   }
 }
 
