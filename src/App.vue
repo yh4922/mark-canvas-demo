@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import MarkCanvas from './plugin/MarkCanvas'
+import MarkCanvas from './plugin/MarkCanvas/src'
 import bgImage from './assets/1.jpg'
 import draggable from 'vuedraggable'
 // import bgImage2 from './assets/2.jpg'
@@ -56,9 +56,6 @@ var objectList = ref<any[]>([])
 onMounted(() => {
   mark.value = new MarkCanvas({
     view: "mark-box",
-    wheel: {
-      zoomSpeed: 0.1,
-    },
     fill: "#b8b8b8"
   })
 
@@ -158,7 +155,7 @@ function setLabel(e: any, el: any) {
 <template>
   <div class="page">
 
-    <div>
+    <div v-show="false">
       <b>画布操作</b>：
       1.双击鼠标恢复大小;&nbsp;&nbsp;&nbsp;2.Ctrl + 滚轮缩放;&nbsp;&nbsp;&nbsp;3.按住空格拖动画布<br />
       <b>多边形绘制</b>：
@@ -175,7 +172,7 @@ function setLabel(e: any, el: any) {
       <button @click="clearLabel">取消</button>
       <button @click="enterLabel">提交</button>
     </div>
-    <textarea v-model="jsonValue" cols="100" rows="8"></textarea>
+    <textarea v-show="false" v-model="jsonValue" cols="100" rows="8"></textarea>
     <div class="tools_bar">
       <button title="不用选择 按住空格键自动进入平移模式" :class="{ active: moveStatus }">
         <!-- 移动 -->

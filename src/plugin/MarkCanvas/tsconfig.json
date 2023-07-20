@@ -9,6 +9,7 @@
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
+    "strictNullChecks": false,
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -23,10 +24,10 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "./**/*.ts",
+    "./src/**/*",
   ],
   // 忽略 node_modules
   "exclude": [
-    "node_modules/**"
+    "node_modules"
   ]
 }

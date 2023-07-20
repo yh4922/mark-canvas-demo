@@ -62,6 +62,7 @@ class MarkCanvas {
     this.config = {
       lineWidth: 2,
     }
+
     // 合并配置
     Object.assign(this.config, config || {})
 
