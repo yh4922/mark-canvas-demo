@@ -4,7 +4,6 @@ import {
   ZoomEvent, MoveEvent, Rect, Line
 } from 'leafer-ui'
 
-import anime from 'animejs/lib/anime.es.js';
 
 import { MarkObjectType, MarkObject, MarkRectObject, MarkPolygonObject } from './object'
 
@@ -12,50 +11,50 @@ import { MarkObjectType, MarkObject, MarkRectObject, MarkPolygonObject } from '.
 
 class MarkCanvas {
   // app 集成 APP 单独设置 view 为HTMLElement
-  app: App
+  app
   // 配置
-  config: MarkConfig
+  config
   // 初始布局
-  initLayout: MarkLayout = { zoom: 1, offsetx: 0, offsety: 0 }
+  initLayout = { zoom: 1, offsetx: 0, offsety: 0 }
   // 当前布局
-  curLayout: MarkLayout = { zoom: 1, offsetx: 0, offsety: 0 }
+  curLayout = { zoom: 1, offsetx: 0, offsety: 0 }
   // 初始大小
-  originSize: MarkSize = { width: 0, height: 0 }
+  originSize = { width: 0, height: 0 }
   // 最后鼠标光标位置
-  lastMovePoint?: IPointData
+  lastMovePoint
   // 标注对象图层
-  objectsLayer: Leafer
+  objectsLayer
   // 背景图片
-  backgroundImage: Image
+  backgroundImage
   // 辅助图层
-  guideLayer: Leafer
+  guideLayer
   // 辅助线
-  guideLine: Path
+  guideLine
   // 选择模式
-  selectMode: boolean = true
+  selectMode = true
   /** 选中标注对象下标 */
-  selectObject?: MarkObject
+  selectObject
   // 平移状态
-  moveStatus: boolean = false
+  moveStatus = false
   // 鼠标按下
-  mouseDown: boolean = false
+  mouseDown = false
   // 缩放状态
-  zoomStatus: boolean = false
+  zoomStatus = false
   // 全局键盘按下事件
-  windowKeydown: (e: KeyboardEvent) => void
+  windowKeydown
   // 全局键盘抬起事件
-  windowKeyup: (e: KeyboardEvent) => void
+  windowKeyup
   // 鼠标移动事件
-  docMouseMove: (e: MouseEvent) => void
+  docMouseMove
   // 当前绘制类型
-  currentDrawingType: MarkObjectType = MarkObjectType.NONE
+  currentDrawingType = MarkObjectType.NONE
   // 标注对象列表
-  markObjectList: MarkObject[] = []
+  markObjectList = []
   /**
    * 初始化标注画布
    * @param userConfig
    */
-  constructor(userConfig: ILeaferConfig, config?: MarkConfig) {
+  constructor(userConfig, config) {
     // 初始化应用
     this.app = new App({
       type: "user",
@@ -74,7 +73,7 @@ class MarkCanvas {
     this.view.style.cursor = 'default'
     // 禁用右键菜单
     this.view.oncontextmenu = () => {
-      let point = this.pointMapping(this.lastMovePoint!)
+      let point = this.pointMapping(this.lastMovePoint)
       this.app.emit("oncontextmenu", point)
       return false
     }
@@ -85,14 +84,6 @@ class MarkCanvas {
     // 背景图片
     this.backgroundImage = new Image()
     this.objectsLayer.add(this.backgroundImage)
-
-    let line0 = new Line({ x: 0, y: 0, strokeWidth: 5, width: 0, stroke: "red", rotation: 45 })
-    this.objectsLayer.add(line0)
-
-    setTimeout(() => {
-      let time = 200
-      anime({ targets: line0, easing: 'linear', width: 141.4213562373095, duration: time, delay: time * 0 })
-    }, 200)
 
     // 辅助提示图层
     this.guideLayer = this.app.addLeafer({ hittable: false })
@@ -131,27 +122,27 @@ class MarkCanvas {
       x = e.clientX - x
       y = e.clientY - y
       // let point = this.pointMapping({ x, y })
-      let event: any = { x, y }
+      let event = { x, y }
       if (e.target) event.origin = { target: e.target }
       event.buttons = e.buttons
       event.spaceKey = this.moveStatus
-      this.appPointMove(event as PointerEvent)
+      this.appPointMove(event)
     }
     document.addEventListener('mousemove', this.docMouseMove)
   }
   /** 获取画布DOM */
-  get view(): HTMLElement {
-    return this.app.view as HTMLElement
+  get view() {
+    return this.app.view
   }
   /** 加载初始背景 */
-  async setBackground(path: string) {
+  async setBackground(path) {
     return new Promise((resolve) => {
       // 图片对象
       // const image = new Image({ url: path })
       this.backgroundImage.url = path
 
       // 图片加载
-      this.backgroundImage.once(ImageEvent.LOADED, (e: ImageEvent) => {
+      this.backgroundImage.once(ImageEvent.LOADED, (e) => {
         // 记录图片原始大小  后续所有的坐标都基于这个尺寸
         this.originSize = { width: e.image.width, height: e.image.height }
         this.backgroundImage.width = e.image.width
@@ -179,7 +170,7 @@ class MarkCanvas {
     })
   }
   /** 设置标注对象 */
-  setObjectData(list: MarkObjectJSON[]) {
+  setObjectData(list) {
     list.forEach((item) => {
       let obj;
       if (item.type === MarkObjectType.POLYGON) {
@@ -195,8 +186,8 @@ class MarkCanvas {
    * 排序对象
    * @param ids 
    */
-  sortObject(ids: MarkObjectId[]) {
-    let list: MarkObject[] = []
+  sortObject(ids) {
+    let list = []
 
     ids.forEach((id) => {
       let obj = this.markObjectList.find((item) => item.id === id)
@@ -215,7 +206,7 @@ class MarkCanvas {
    * 选中对象ID
    * @param id 
    */
-  selectObjectById(id: MarkObjectId) {
+  selectObjectById(id) {
     let obj = this.markObjectList.find((item) => item.id === id)
     if (obj) obj.setSelect(true)
   }
@@ -224,7 +215,7 @@ class MarkCanvas {
    * @param id 
    * @param data 
    */
-  setObjectLabel(id: MarkObjectId, data: ObjectLabelData) {
+  setObjectLabel(id, data) {
     let obj = this.markObjectList.find((item) => item.id === id)
     if (obj) obj.setLabel(data)
   }
@@ -232,14 +223,14 @@ class MarkCanvas {
    * 删除对象
    * @param id 
    */
-  deleteObject(id: MarkObjectId) {
+  deleteObject(id) {
     let obj = this.markObjectList.find((item) => item.id === id)
     if (obj) obj.destory()
     this.markObjectList = this.markObjectList.filter((item) => item.id !== id)
     this.app.emit('onchange')
   }
   /** 设置选择模式 */
-  setSelectMode(mode: boolean) {
+  setSelectMode(mode) {
     if (this.selectMode == mode) return
 
     // 选中状态取消当前绘制
@@ -251,11 +242,11 @@ class MarkCanvas {
     }
 
     this.selectMode = mode
-    if (this.lastMovePoint) this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus } as PointerEvent);
+    if (this.lastMovePoint) this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus });
     this.app.emit("onselect", { status: mode })
   }
   /** 缩放画布 */
-  scale(zoom: number) {
+  scale(zoom) {
     // 缩放标注图层
     this.objectsLayer.zoomLayer.scaleX = zoom
     this.objectsLayer.zoomLayer.scaleY = zoom
@@ -265,7 +256,7 @@ class MarkCanvas {
     this.app.emit('onzoom', { zoom })
   }
   /** 平移画布 */
-  translate(x: number, y: number) {
+  translate(x, y) {
     // 平移标注图层
     this.objectsLayer.moveLayer.x = x
     this.objectsLayer.moveLayer.y = y
@@ -276,14 +267,14 @@ class MarkCanvas {
     this.app.emit('onTranslate', { x, y })
   }
   /** 设置移动状态 */
-  setMoveStatus(status: boolean) {
+  setMoveStatus(status) {
     if (this.moveStatus == status) return
     this.moveStatus = status
-    this.lastMovePoint && this.appPointMove({ ...this.lastMovePoint, spaceKey: status } as PointerEvent);
+    this.lastMovePoint && this.appPointMove({ ...this.lastMovePoint, spaceKey: status });
     this.app.emit("onmove", { status })
   }
   /** 计算相对底图的坐标点位 */
-  pointMapping(point: IPointData): IPointData {
+  pointMapping(point) {
     // 新的点位
     let newPoint = { x: 0, y: 0 }
     // 还原偏移缩放
@@ -293,12 +284,12 @@ class MarkCanvas {
     return newPoint
   }
   /** 最后点位 */
-  get lastPoint(): IPointData | null {
+  get lastPoint() {
     if (!this.lastMovePoint) return null
     return this.pointMapping(this.lastMovePoint)
   }
   /** 画布鼠标移动 */
-  appPointMove(e: PointerEvent) {
+  appPointMove(e) {
     // 判断元素不处于画布上离开画布
     // if (e.origin) {
     //   if (e.origin.target !== this.view) {
@@ -309,7 +300,7 @@ class MarkCanvas {
     let point = this.pointMapping(e)
 
     // 当前没有选中编辑对象
-    let indexs: number[] = this.markObjectList.map((obj, i) => {
+    let indexs = this.markObjectList.map((obj, i) => {
       obj.mouseEnter = false; obj.render(); return i
     }).reverse()
 
@@ -358,7 +349,7 @@ class MarkCanvas {
     this.app.emit("onpointleave")
   }
   /** 绘制辅助线 */
-  renderGuideLine(e: PointerEvent) {
+  renderGuideLine(e) {
     // 初始化路径
     let path = ""
 
@@ -383,13 +374,13 @@ class MarkCanvas {
     this.guideLine.path = path
   }
   /** 鼠标按下事件 */
-  appPointDown(e: PointerEvent) {
+  appPointDown(e) {
     if (this.moveStatus) return
     let point = this.pointMapping(e)
     e.buttons === 1 && this.app.emit("onpointdown", point)
   }
   /** 鼠标抬起事件 */
-  appPointUp(e: PointerEvent) {
+  appPointUp(e) {
     if (this.moveStatus) return
     let point = this.pointMapping(e)
     this.app.emit("onpointup", point)
@@ -418,7 +409,7 @@ class MarkCanvas {
     this.initLayout = { zoom, offsetx, offsety }
   }
   /** 缩放事件 */
-  appZooming(e: ZoomEvent) {
+  appZooming(e) {
     // 缩放中心点
     const center = { x: e.x, y: e.y }
     // 计算新的缩放大小
@@ -426,19 +417,19 @@ class MarkCanvas {
     // 平移画布
     LeafHelper.zoomOf(this.objectsLayer, center, scale)
     // 修正坐标
-    this.scale(this.objectsLayer.zoomLayer.scaleX!)
-    this.translate(this.objectsLayer.moveLayer.x!, this.objectsLayer.moveLayer.y!)
+    this.scale(this.objectsLayer.zoomLayer.scaleX)
+    this.translate(this.objectsLayer.moveLayer.x, this.objectsLayer.moveLayer.y)
   }
   /** 平移事件 */
-  appMoving(e: MoveEvent) {
+  appMoving(e) {
     if (e.buttons == 0) return
     LeafHelper.move(this.objectsLayer, e.moveX, e.moveY)
-    this.scale(this.objectsLayer.zoomLayer.scaleX!)
-    this.translate(this.objectsLayer.moveLayer.x!, this.objectsLayer.moveLayer.y!)
+    this.scale(this.objectsLayer.zoomLayer.scaleX)
+    this.translate(this.objectsLayer.moveLayer.x, this.objectsLayer.moveLayer.y)
     this.setMoveStatus(true)
   }
   /** 键盘按下 */
-  private async _windowKeydown(e: KeyboardEvent) {
+  async _windowKeydown(e) {
     if (e.code == 'Space') {
       this.setMoveStatus(true)
       e.preventDefault()
@@ -462,13 +453,13 @@ class MarkCanvas {
     }
   }
   /** 键盘抬起 */
-  private _windowKeyup(e: KeyboardEvent) {
+  _windowKeyup(e) {
     if (e.code == 'Space') {
       this.setMoveStatus(false)
     }
   }
   /** 设置绘制模式 */
-  async setDrawType(type: MarkObjectType) {
+  async setDrawType(type) {
     // 取消选择模式
     this.setSelectMode(false)
 
@@ -488,7 +479,7 @@ class MarkCanvas {
         // 相同类型再次点击 取消选中
         this.currentDrawingType = MarkObjectType.NONE
         this.app.emit("ondraw", { type: MarkObjectType.NONE })
-        this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus } as PointerEvent);
+        this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus });
         return
       }
     }
@@ -506,7 +497,7 @@ class MarkCanvas {
     }
 
     // 回调函数
-    this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus } as PointerEvent);
+    this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus });
     this.app.emit("ondraw", { type })
   }
   /**
@@ -515,13 +506,13 @@ class MarkCanvas {
   clear() {
     this.markObjectList.forEach(item => item.destory())
     this.markObjectList = []
-    this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus } as PointerEvent);
+    this.appPointMove({ ...this.lastMovePoint, spaceKey: this.moveStatus });
     this.backgroundImage.url = ''
   }
   /**
    * 获取标注对象基本信息
    */
-  get objects(): MarkObjectInfo[] {
+  get objects() {
     return this.markObjectList.filter(item => item.status !== 'draw').map(obj => {
       return {
         id: obj.id,
@@ -532,7 +523,7 @@ class MarkCanvas {
     })
   }
   /** 导出JSON数据 */
-  toJSON(): MarkObjectJSON[] {
+  toJSON() {
     return this.markObjectList.filter(item => item.status !== 'draw').map(obj => obj.export())
   }
   destory() {
